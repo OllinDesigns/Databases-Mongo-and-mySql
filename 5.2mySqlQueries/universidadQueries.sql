@@ -27,7 +27,6 @@ JOIN grado g ON a.id_grado = g.id
 JOIN curso_escolar c ON g.id = c.id
 WHERE c.anyo_inicio = 2015 AND a.cuatrimestre = 3 AND g.id = 7;
 
-
 -- Returns a list of professors along with the name of the department to which they are linked. The listing should return four columns, first last name, second last name, first name and department name. The result will be sorted alphabetically from lowest to highest by last name and first name.
 SELECT p.apellido1, p.apellido2, p.nombre, d.nombre AS departamento
 FROM persona p
@@ -61,7 +60,6 @@ WHERE c.id = 5;
 -- Solve the following 6 queries using the LEFT JOIN and RIGHT JOIN clauses.
 
 -- Returns a list with the names of all the professors and the departments they are linked to. The list must also show those professors who do not have any associated department. The listing must return four columns, department name, first last name, second last name and teacher's name. The result will be sorted alphabetically from lowest to highest by department name, last name and first name.
-
 SELECT d.nombre AS department_name, p.apellido1 AS last_name, p.apellido2 AS second_last_name, p.nombre AS teacher_name
 FROM persona p
 LEFT JOIN profesor pr ON p.id = pr.id_profesor
@@ -151,7 +149,6 @@ FROM curso_escolar ce
 JOIN alumno_se_matricula_asignatura am ON ce.id = am.id_curso_escolar
 GROUP BY ce.anyo_inicio
 ORDER BY ce.anyo_inicio;
-
 
 -- Returns a list with the number of subjects taught by each teacher. The list must take into account those professors who do not teach any subjects. The result will show five columns: id, name, first last name, second last name and number of subjects. The result will be ordered from highest to lowest by the number of subjects.
 SELECT p.id, p.nombre, p.apellido1, p.apellido2, COUNT(a.id) AS number_of_subjects

@@ -3,7 +3,7 @@ DROP SCHEMA IF EXISTS `optician`;
 CREATE SCHEMA IF NOT EXISTS `optician` DEFAULT CHARACTER SET utf8MB4;
 USE `optician`;
 
-CREATE TABLE `optician`.`SUPPLIER` (
+CREATE TABLE `optician`.`supplier` (
   `supplier_id` INT NOT NULL AUTO_INCREMENT,
   `supplier_name` VARCHAR(50) NOT NULL,
   `last_name` VARCHAR(50) NOT NULL,
@@ -30,7 +30,7 @@ VALUES
   ('Angelique', 'Kidjo', 'Soul Avenue', '20', '4b', '1', 'Cotonou', 'bj320', 'Benin', '5632897', '9845666', '510309'),
   ('Salif', 'Keita', 'Mali Road', '8', '2c', '3', 'Bamako', 'ml330', 'Mali', '6785241', '9845777',  '207908');
 
-CREATE TABLE IF NOT EXISTS `optician`.`CUSTOMERS` (
+CREATE TABLE IF NOT EXISTS `optician`.`customers` (
   `customer_id` INT NOT NULL AUTO_INCREMENT,
   `customer_name` VARCHAR(45) NOT NULL,
   `customer_postcode` VARCHAR(10) NOT NULL,
@@ -61,7 +61,7 @@ VALUES
 ('Munnira Katongole', '26954', '5552695', 'katongole@example.com', '2020-12-12', ''),
 ('Farida Charity', '15843', '5551584', 'farida@example.com', '2021-01-01', 'Zoneziwoh Mbondgulo-Wondieh');
 
-CREATE TABLE IF NOT EXISTS `optician`.`GLASSES` (
+CREATE TABLE IF NOT EXISTS `optician`.`glasses` (
   `glass_id` INT NOT NULL AUTO_INCREMENT,
   `brand` VARCHAR(30) NOT NULL,
   `supplier` INT NOT NULL,
@@ -95,7 +95,7 @@ VALUES
   ('Ray-Ban', '11', '19.6', 'metallic frame', 'black', 'gray', '99.99'),
   ('Oakley', '12', '17.8', 'paste frame', 'white', 'transparent', '70.50');
 
-CREATE TABLE IF NOT EXISTS `optician`.`SALES` (
+CREATE TABLE IF NOT EXISTS `optician`.`sales` (
   `sale_id` INT NOT NULL AUTO_INCREMENT,
   `sale_date` DATE NOT NULL,
   `soldby_employee` VARCHAR(45) NOT NULL,
@@ -152,9 +152,9 @@ VALUES
   ('2022-05-28', 'Immanuel Kant', FLOOR(1 + RAND() * 17), FLOOR(11 + RAND() * 7)),
   ('2021-11-11', 'Delfin Quishpe', FLOOR(1 + RAND() * 17), FLOOR(11 + RAND() * 7));
   
-  # This is what is asked by the 'entrega'
+--   # This is what is asked by the 'entrega'
 
-### List the total purchases of a customer.
+-- ### List the total purchases of a customer.
 
 SELECT c.customer_id, c.customer_name, COUNT(*) AS 'total purchases of made by a customer'
 FROM optician.customers c

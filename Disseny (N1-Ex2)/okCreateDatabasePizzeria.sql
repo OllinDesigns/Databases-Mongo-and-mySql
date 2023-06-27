@@ -3,7 +3,7 @@ DROP SCHEMA IF EXISTS `pizzeria`;
 CREATE SCHEMA IF NOT EXISTS `pizzeria` DEFAULT CHARACTER SET utf8MB4;
 USE `pizzeria`;
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`CATEGORIES` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`categories` (
   `cat_id` INT NOT NULL AUTO_INCREMENT,
   `cat_name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`cat_id`),
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`CATEGORIES` (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`CUSTOMER` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`customer` (
   `customer_id` INT NOT NULL,
   `customer_name` VARCHAR(45) NOT NULL,
   `customer_surname` VARCHAR(45) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`CUSTOMER` (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`STORE` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`store` (
   `store_id` INT NOT NULL,
   `store_name` VARCHAR(45) NOT NULL,
   `store_address` VARCHAR(45) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`STORE` (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`EMPLOYEE` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`employee` (
   `employee_id` INT NOT NULL,
   `employee_name` VARCHAR(45) NOT NULL,
   `employee_lastname` VARCHAR(45) NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`EMPLOYEE` (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`PRODUCTS` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`products` (
   `product_id` INT NOT NULL,
   `product_name` VARCHAR(45) NOT NULL,
   `product_description` VARCHAR(100) NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`PRODUCTS` (
 ENGINE = InnoDB;
 
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`ORDERS` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`orders` (
   `order_id` INT NOT NULL,
   `order_total_price` DECIMAL(6,3),
   `quantity_of_products` INT,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`ORDERS` (
 )
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `pizzeria`.`ORDERED_ITEMS` (
+CREATE TABLE IF NOT EXISTS `pizzeria`.`ordered_items` (
   `orderedItems_id` INT NOT NULL,
   `orders_orderId` INT NOT NULL,
   `orderedItems_productId` INT NOT NULL,
@@ -139,8 +139,8 @@ ENGINE = InnoDB;
 DELIMITER $$
 
 -- TRIGGER_INSERT_ORDERED_ITEMS
-CREATE TRIGGER `pizzeria`.`TRIGGER_INSERT_ORDERED_ITEMS`
-BEFORE INSERT ON `pizzeria`.`ORDERED_ITEMS`
+CREATE TRIGGER `pizzeria`.`trigger_insert_ordered_items` 
+BEFORE INSERT ON `pizzeria`.`ordered_items`
 FOR EACH ROW
 BEGIN
   -- Update the price of the ordered item based on the product price
@@ -160,16 +160,16 @@ BEGIN
 END$$
 
 -- TRIGGER_UPDATE_ORDERED_ITEMS
-CREATE TRIGGER `pizzeria`.`TRIGGER_UPDATE_ORDERED_ITEMS`
-AFTER INSERT ON `pizzeria`.`ORDERED_ITEMS`
+CREATE TRIGGER `pizzeria`.`trigger_update_ordered_items`
+AFTER INSERT ON `pizzeria`.`ordered_items`
 FOR EACH ROW
 BEGIN
   DECLARE total_price DECIMAL(6,3);
 
-  SELECT SUM(PRODUCTS.product_price * NEW.orderedItems_productquantity) -- Multiply the price by the quantity
+  SELECT SUM(products.product_price * NEW.orderedItems_productquantity) -- Multiply the price by the quantity
   INTO total_price
-  FROM PRODUCTS
-  WHERE PRODUCTS.product_id = NEW.orderedItems_productId;
+  FROM products
+  WHERE products.product_id = NEW.orderedItems_productId;
 
   -- UPDATE ORDERS
   -- SET order_total_price = IFNULL(order_total_price, 0) + total_price
@@ -178,13 +178,13 @@ END$$
 
 -- Trigger to check delivery employee position
 CREATE TRIGGER `pizzeria`.`check_delivery_employee_position`
-BEFORE INSERT ON `pizzeria`.`ORDERS`
+BEFORE INSERT ON `pizzeria`.`orders`
 FOR EACH ROW
 BEGIN
   DECLARE employee_position ENUM('cook', 'delivery person');
   
   SELECT employee_position INTO employee_position
-  FROM `pizzeria`.`EMPLOYEE`
+  FROM `pizzeria`.`employee`
   WHERE `employee_id` = NEW.delivery_employee;
   
   IF employee_position != 'delivery person' THEN
@@ -281,7 +281,7 @@ VALUES
   ('017', 61.60, '2', '13', '2', 'true', '5', '2023-05-25 11:30:00'),
   ('018', 28.90, '3', '1', '1', 'false', NULL, '2023-06-01 08:00:00');
 
-INSERT INTO `ORDERED_ITEMS` (`orderedItems_id`, `orders_orderId`, `orderedItems_productId`, `orderedItems_productquantity`)
+INSERT INTO `ordered_items` (`orderedItems_id`, `orders_orderId`, `orderedItems_productId`, `orderedItems_productquantity`)
 VALUES
   ('001', '001', '18', '4'),
   ('002', '001', '2', '4'),
@@ -344,16 +344,16 @@ VALUES
 -- ## List how many products of type "Beverages". have been sold in a certain locality.
 
 SELECT COUNT(*) AS 'total drinks sold in CheesyTimes Nairobi'
-FROM ORDERED_ITEMS oi
-JOIN PRODUCTS p ON oi.orderedItems_productId = p.product_id
-JOIN CATEGORIES c ON p.product_category = c.cat_id
-JOIN ORDERS o ON oi.orders_orderId = o.order_id
+FROM ordered_items oi
+JOIN products p ON oi.orderedItems_productId = p.product_id
+JOIN categories c ON p.product_category = c.cat_id
+JOIN orders o ON oi.orders_orderId = o.order_id
 WHERE c.cat_id = 3 AND o.order_by_store = 1;
      
 -- ## List how many orders a certain employee has made.
 
 SELECT e.employee_name, e.employee_lastname,
 COUNT(*) AS 'oders sold by this employee'
-FROM ORDERS o
+FROM orders o
 JOIN employee e ON o.delivery_employee = e.employee_id
 WHERE e.employee_id = 4 AND o.delivery_employee = 4;

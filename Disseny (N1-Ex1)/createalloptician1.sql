@@ -1,9 +1,10 @@
-DROP SCHEMA IF EXISTS `optician`;
+DROP SCHEMA IF EXISTS optician;
 
-CREATE SCHEMA IF NOT EXISTS `optician` DEFAULT CHARACTER SET utf8MB4;
-USE `optician`;
+CREATE DATABASE IF NOT EXISTS optician;
 
-CREATE TABLE `optician`.`supplier` (
+USE optician;
+
+CREATE TABLE IF NOT EXISTS `optician`.`supplier` (
   `supplier_id` INT NOT NULL AUTO_INCREMENT,
   `supplier_name` VARCHAR(50) NOT NULL,
   `last_name` VARCHAR(50) NOT NULL,
@@ -16,15 +17,14 @@ CREATE TABLE `optician`.`supplier` (
   `country` VARCHAR(50) NOT NULL,
   `telephone` VARCHAR(20) NOT NULL,
   `fax` INT NULL DEFAULT NULL,
-  `nif` VARCHAR(30) NOT NULL,
+  `nif_number` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`supplier_id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-INSERT INTO optician.supplier (supplier_name, last_name, street, housenr, floor, door, city, postal_code, country, telephone, fax, nif)
-VALUES
+INSERT INTO `optician`.`supplier` (supplier_name, last_name, street, housenr, floor, door, city, postal_code, country, telephone, fax, nif_number) VALUES
   ('Gaz', 'Mawete', 'Freedom Avenue', '10', '1a', '2', 'Kinshasa', 'rw430', 'Democratic Republic of Congo', '9845523', '9845444', '309712'),
   ('Femi', 'Kuti', 'Afrobeat Street', '15', '3', '2', 'Lagos', 'ng110', 'Nigeria', '7358192', '9845555', '408516'),
   ('Angelique', 'Kidjo', 'Soul Avenue', '20', '4b', '1', 'Cotonou', 'bj320', 'Benin', '5632897', '9845666', '510309'),
@@ -41,8 +41,7 @@ CREATE TABLE IF NOT EXISTS `optician`.`customers` (
   PRIMARY KEY (`customer_id`))
 ENGINE = InnoDB;
 
-INSERT INTO optician.customers (customer_name, customer_postcode, customer_phone, customer_email, customer_registrationdate, recomendedby)
-VALUES
+INSERT INTO `optician`.`customers` (customer_name, customer_postcode, customer_phone, customer_email, customer_registrationdate, recomendedby) VALUES
 ('Wilfried Zaha', '23800', '6223385', 'wilfridozaha@gmail.com', '2018-03-05', 'Munnira Katongole'),
 ('Franck Kessie', '16400', '6403360', 'elkessie@gmail.com', '2019-04-14', ''),
 ('Mohamed Salah', '23800', '6223385', 'salah@example.com', '2018-03-05', 'Sadio Mané'),
@@ -74,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `optician`.`glasses` (
   INDEX `getSupplier_idx` (`supplier` ASC) VISIBLE,
   CONSTRAINT `getSupplier`
     FOREIGN KEY (`supplier`)
-    REFERENCES `optician`.`SUPPLIER` (`supplier_id`)
+    REFERENCES `optician`.`supplier` (`supplier_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -82,8 +81,7 @@ AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-INSERT INTO optician.glasses (brand, supplier, graduation, frame_type, frame_color, glass_color, price)
-VALUES
+INSERT INTO `optician`.`glasses` (brand, supplier, graduation, frame_type, frame_color, glass_color, price) VALUES
   ('Ray-Ban', '11', '23.2', 'paste frame', 'red', 'transparent', '50.50'),
   ('Oakley', '12', '15.2', 'metallic frame', 'orange', 'pink', '88.9'),
   ('Gucci', '13', '18.5', 'floating frame', 'black', 'gray', '120.00'),
@@ -98,26 +96,25 @@ VALUES
 CREATE TABLE IF NOT EXISTS `optician`.`sales` (
   `sale_id` INT NOT NULL AUTO_INCREMENT,
   `sale_date` DATE NOT NULL,
-  `soldby_employee` VARCHAR(45) NOT NULL,
+  `sold_by_employee` VARCHAR(45) NOT NULL,
   `soldto_customer` INT NOT NULL,
   `glass_id` INT NULL,
   PRIMARY KEY (`sale_id`),
   INDEX `getItem_idx` (`glass_id` ASC) VISIBLE,
   INDEX `soldTo_idx` (`soldto_customer` ASC) VISIBLE,
-  CONSTRAINT `glassId`
+  CONSTRAINT `glassId_fk`
     FOREIGN KEY (`glass_id`)
-    REFERENCES `optician`.`GLASSES` (`glass_id`)
+    REFERENCES `optician`.`glasses` (`glass_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `soldTo`
     FOREIGN KEY (`soldto_customer`)
-    REFERENCES `optician`.`CUSTOMERS` (`customer_id`)
+    REFERENCES `optician`.`customers` (`customer_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
   
-  INSERT INTO optician.sales (sale_date, soldby_employee, soldto_customer, glass_id)
-VALUES
+  INSERT INTO `optician`.`sales` (sale_date, sold_by_employee, soldto_customer, glass_id) VALUES
   ('2019-06-20', 'Paula Gomez', FLOOR(1 + RAND() * 17), FLOOR(11 + RAND() * 7)),
   ('2022-05-28', 'Immanuel Kant', FLOOR(1 + RAND() * 17), FLOOR(11 + RAND() * 7)),
   ('2021-11-11', 'Delfin Quishpe', FLOOR(1 + RAND() * 17), FLOOR(11 + RAND() * 7)),
@@ -162,14 +159,15 @@ JOIN optician.sales s ON c.customer_id = s.soldto_customer
 WHERE c.customer_id = 11
 GROUP BY c.customer_id, c.customer_name;
 
+
 ### List the different glasses that an employee has sold during a year.
 -- SOLUTION:
 
-SELECT s.sale_id,  g.brand AS 'these are the glasses than Mr Quishpe sold in 2021', s.soldby_employee, s.sale_date
+SELECT s.sale_id,  g.brand AS 'these are the glasses than Mr Quishpe sold in 2021', s.sold_by_employee, s.sale_date
 FROM optician.sales s
 JOIN optician.glasses g ON s.glass_id = g.glass_id
 JOIN optician.customers c ON s.soldto_customer = c.customer_id
-WHERE s.soldby_employee = 'Delfin Quishpe'
+WHERE s.sold_by_employee = 'Delfin Quishpe'
   AND YEAR(s.sale_date) = 2021;
   
   
@@ -204,7 +202,7 @@ FROM customers;
 ### Our system must indicate who was the employee who sold each pair of glasses.
 -- SOLUTION: 
 
-SELECT s.sale_id, s.glass_id, g.brand, c.customer_name, c.customer_id, s.sale_date, s.soldby_employee
+SELECT s.sale_id, s.glass_id, g.brand, c.customer_name, c.customer_id, s.sale_date, s.sold_by_employee
 FROM optician.sales s
 JOIN optician.glasses g ON s.glass_id = g.glass_id
 JOIN optician.customers c ON s.soldto_customer = c.customer_id;
@@ -216,3 +214,5 @@ JOIN optician.customers c ON s.soldto_customer = c.customer_id;
 SELECT *
 FROM optician.sales
 WHERE sale_date BETWEEN '2021-01-01' AND '2021-12-31';
+
+

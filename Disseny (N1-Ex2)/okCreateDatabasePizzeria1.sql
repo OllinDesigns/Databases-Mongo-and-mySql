@@ -1,7 +1,7 @@
-DROP SCHEMA IF EXISTS `pizzeria`;
+DROP SCHEMA IF EXISTS pizzeria;
 
-CREATE SCHEMA IF NOT EXISTS `pizzeria` DEFAULT CHARACTER SET utf8MB4;
-USE `pizzeria`;
+CREATE DATABASE IF NOT EXISTS pizzeria DEFAULT CHARACTER SET utf8MB4;
+USE pizzeria;
 
 CREATE TABLE IF NOT EXISTS `pizzeria`.`categories` (
   `cat_id` INT NOT NULL AUTO_INCREMENT,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`employee` (
   INDEX `store_id_idx` (`employee_store` ASC) VISIBLE,
   CONSTRAINT `store_id`
     FOREIGN KEY (`employee_store`)
-    REFERENCES `pizzeria`.`STORE` (`store_id`)
+    REFERENCES `pizzeria`.`store` (`store_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`products` (
   INDEX `product_category_idx` (`product_category` ASC) VISIBLE,
   CONSTRAINT `product_category_id`
     FOREIGN KEY (`product_category`)
-    REFERENCES `pizzeria`.`CATEGORIES` (`cat_id`)
+    REFERENCES `pizzeria`.`categories` (`cat_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
@@ -92,17 +92,17 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`orders` (
   INDEX `deliver_idx` (`delivery_employee` ASC) VISIBLE,
   CONSTRAINT `orderByCustomer`
     FOREIGN KEY (`order_by_customer`)
-    REFERENCES `pizzeria`.`CUSTOMER` (`customer_id`)
+    REFERENCES `pizzeria`.`customer` (`customer_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `orderByStore`
     FOREIGN KEY (`order_by_store`)
-    REFERENCES `pizzeria`.`STORE` (`store_id`)
+    REFERENCES `pizzeria`.`store` (`store_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `deliver`
     FOREIGN KEY (`delivery_employee`)
-    REFERENCES `pizzeria`.`EMPLOYEE` (`employee_id`)
+    REFERENCES `pizzeria`.`employee` (`employee_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `check_delivery_employee`
@@ -125,12 +125,12 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`ordered_items` (
   INDEX `orderIdFromOrders_idx` (`orders_orderId` ASC) VISIBLE,
   CONSTRAINT `productId`
     FOREIGN KEY (`orderedItems_productId`)
-    REFERENCES `pizzeria`.`PRODUCTS` (`product_id`)
+    REFERENCES `pizzeria`.`products` (`product_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
     CONSTRAINT `orderIdFromOrders`
     FOREIGN KEY (`orders_orderId`)
-    REFERENCES `pizzeria`.`ORDERS` (`order_id`)
+    REFERENCES `pizzeria`.`orders` (`order_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
@@ -195,12 +195,13 @@ END$$
 DELIMITER ;
 
 
-INSERT INTO `categories` (`cat_name`) VALUES ('Pizzas'),
+INSERT INTO `pizzeria`.`categories` (`cat_name`) VALUES 
+('Pizzas'),
 ('Hamburgers'),
 ('Drinks');
 
-INSERT INTO `customer` (`customer_id`, `customer_name`, `customer_surname`, `customer_address`, `customer_postalcode`, `city`, `province`, `customer_phone`, `active_order` ) 
-VALUES ('001', 'Fulgencio', 'Pantana', 'Oak Street 23', '18001', 'Nairobi', 'NBI', '2505334', 'YES' ),
+INSERT INTO `pizzeria`.`customer` (`customer_id`, `customer_name`, `customer_surname`, `customer_address`, `customer_postalcode`, `city`, `province`, `customer_phone`, `active_order` ) VALUES 
+('001', 'Fulgencio', 'Pantana', 'Oak Street 23', '18001', 'Nairobi', 'NBI', '2505334', 'YES' ),
 ('002', 'Munnira', 'Katongole', 'Eucalypt Road 666', '23004', 'Kisumu', 'KSM', '644937898', 'NO' ),
 ('003', 'Zoneziwoh', 'Mbondgulo-Wondieh', 'Bonsai Avenue 69', '43002', 'Akure', 'Ondo', '46497898', 'NO' ),
 ('004', 'Aisha', 'Abdullahi', 'Palm Grove 12', '76009', 'Lagos', 'Lagos', '123456789', 'YES'),
@@ -221,12 +222,11 @@ VALUES ('001', 'Fulgencio', 'Pantana', 'Oak Street 23', '18001', 'Nairobi', 'NBI
 ('019', 'Emilia', 'Andersson', 'Birch Street 8', '113 57', 'Stockholm', 'Stockholm', '999888777', 'NO'),
 ('020', 'Ahmed', 'Saeed', 'Sheikh Zayed Road 55', '12345', 'Dubai', 'Dubai', '777666555', 'YES');
 
-INSERT INTO `store` (`store_id`, `store_name`, `store_address`, `store_postcode`, `store_town`, `province` )
-VALUES ('001', 'Cheesy Times Nairobi', 'Camel Street 96', '18099', 'Nairobi', 'NBI'),
+INSERT INTO `pizzeria`.`store` (`store_id`, `store_name`, `store_address`, `store_postcode`, `store_town`, `province` ) VALUES 
+('001', 'Cheesy Times Nairobi', 'Camel Street 96', '18099', 'Nairobi', 'NBI'),
 ('002', 'Cheesy Times Tokyo', 'Yakuza Street 777', '12345', 'Tokyo', 'Tokyo');
 
-INSERT INTO `employee` (`employee_id`, `employee_name`, `employee_lastname`, `employee_nif`, `employee_phone`, `employee_position`, `employee_store`)
-VALUES 
+INSERT INTO `pizzeria`.`employee` (`employee_id`, `employee_name`, `employee_lastname`, `employee_nif`, `employee_phone`, `employee_position`, `employee_store`) VALUES 
 ('002', 'Amadou', 'Diop', '20099807', '2255336', 'cook', '1'),
 ('003', 'Amina', 'Ba', '21088907', '2362057', 'cook', '1'),
 ('004', 'Moussa', 'Gueye', '22079808', '2462068', 'delivery person', '1'),
@@ -238,8 +238,8 @@ VALUES
 ('010', 'Oliver', 'Martinez', '28020410', '3062124', 'delivery person', '2'),
 ('011', 'Sophia', 'Lee', '29010510', '3162135', 'delivery person', '2');
 
-INSERT INTO `products` (`product_id`, `product_name`, `product_description`, `product_image`, `product_price`, `product_category`, `is_pizza`)
-VALUES ('001', 'Extra Cheesy Delight', 'a very cheesy pizza', 'C:\Users\Bastet\Pictures\Camera Roll\cheesy1.png', '7.50', '1', '1'),
+INSERT INTO `pizzeria`.`products` (`product_id`, `product_name`, `product_description`, `product_image`, `product_price`, `product_category`, `is_pizza`) VALUES 
+('001', 'Extra Cheesy Delight', 'a very cheesy pizza', 'C:\Users\Bastet\Pictures\Camera Roll\cheesy1.png', '7.50', '1', '1'),
 ('002', 'Cheesy Supreme', 'A pizza loaded with an assortment of cheesy toppings', 'C:\path\to\cheesy_supreme.png', '9.99', '1', '1'),
 ('003', 'Ultimate Cheesy Delight', 'Indulge in the ultimate cheesy experience with this pizza', 'C:\path\to\ultimate_cheesy_delight.png', '8.99', '1', '1'),
 ('004', 'Cheesy Heaven', 'A heavenly combination of cheeses on this pizza', 'C:\path\to\cheesy_heaven.png', '7.99', '1', '1'),
@@ -260,8 +260,7 @@ VALUES ('001', 'Extra Cheesy Delight', 'a very cheesy pizza', 'C:\Users\Bastet\P
 ('019', 'Cheesy Soft Drink Burst', 'A burst of cheesy goodness in a fizzy soft drink', 'C:\path\to\cheesy_soft_drink_burst.png', '4.49', '3', '0'),
 ('020', 'Cheesy Soft Drink Twist', 'A twisted blend of cheesy flavors in a soft drink', 'C:\path\to\cheesy_soft_drink_twist.png', '4.49', '3', '0');
 
-INSERT INTO `orders` (`order_id`, `order_total_price`, `quantity_of_products`, `order_by_customer`, `order_by_store`, `order_for_delivery`, `delivery_employee`, `delivery_datetime`)
-VALUES 
+INSERT INTO `pizzeria`.`orders` (`order_id`, `order_total_price`, `quantity_of_products`, `order_by_customer`, `order_by_store`, `order_for_delivery`, `delivery_employee`, `delivery_datetime`) VALUES 
   ('001', 45.22, '4', '3', '1', 'true', '4', '2020-05-17 00:00:00'),
   ('002', 72.50, '2', '8', '2', 'false', NULL, '2021-08-10 10:30:00'),
   ('003', 18.90, '3', '12', '1', 'true', '7', '2022-03-05 15:45:00'),
@@ -281,8 +280,7 @@ VALUES
   ('017', 61.60, '2', '13', '2', 'true', '5', '2023-05-25 11:30:00'),
   ('018', 28.90, '3', '1', '1', 'false', NULL, '2023-06-01 08:00:00');
 
-INSERT INTO `ordered_items` (`orderedItems_id`, `orders_orderId`, `orderedItems_productId`, `orderedItems_productquantity`)
-VALUES
+INSERT INTO `pizzeria`.`ordered_items` (`orderedItems_id`, `orders_orderId`, `orderedItems_productId`, `orderedItems_productquantity`) VALUES
   ('001', '001', '18', '4'),
   ('002', '001', '2', '4'),
   ('003', '001', '13', '4'),

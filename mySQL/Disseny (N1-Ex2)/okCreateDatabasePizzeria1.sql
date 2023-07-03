@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`products` (
     REFERENCES `pizzeria`.`categories` (`cat_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
+
 )
 ENGINE = InnoDB;
 
@@ -82,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`orders` (
   `quantity_of_products` INT,
   `order_by_customer` INT NOT NULL,
   `order_by_store` INT NOT NULL,
-  `order_for_delivery` VARCHAR(45) NOT NULL, -- true or false
+  `order_for_delivery` ENUM('true', 'false') NOT NULL,
   `delivery_employee` INT NULL,
   `delivery_datetime` DATETIME NULL,
   PRIMARY KEY (`order_id`),

@@ -5,17 +5,80 @@ db.customers.createIndex({ "customerId": 1 }, { unique: true });
 db.createCollection("orders");
 db.orders.createIndex({ "orderId": 1 }, { unique: true });
 
-// Insert customer documents
-const customer1Id = ObjectId();
-const customer2Id = ObjectId();
-const customer3Id = ObjectId();
-const customer4Id = ObjectId();
-const customer5Id = ObjectId();
-const customer6Id = ObjectId();
+class Customer {
+  static generateIds(num) {
+    const ids = [];
+    for (let i = 0; i < num; i++) {
+      ids.push(new ObjectId());
+    }
+    return ids;
+  }
+}
+
+const customerIds = Customer.generateIds(10);
+
+class Pizzacategory {
+    static generateIds(num) {
+    const ids = [];
+    for (let i = 0; i < num; i++) {
+      ids.push(new ObjectId());
+    }
+    return ids;
+  }
+}
+
+const pizzacategoryIds = Pizzacategory.generateIds(2);
+
+const store1Id = ObjectId();
+const store2Id = ObjectId();
+
+class Employee {
+    static generateIds(num) {
+    const ids = [];
+    for (let i = 0; i < num; i++) {
+      ids.push(new ObjectId());
+    }
+    return ids;
+    }
+}
+
+const employeeIds = Employee.generateIds(5)
+
+
+class Product {
+    static generateIds(num) {
+    const ids = [];
+    for (let i = 0; i < num; i++) {
+      ids.push(new ObjectId());
+    }
+    return ids;
+    }
+}
+
+const productIds = Product.generateIds(7)
+
+
+class Order {
+    static generateIds(num) {
+    const ids = [];
+    for (let i = 0; i < num; i++) {
+      ids.push(new ObjectId());
+    }
+    return ids;
+    }
+}
+
+const orderIds = Order.generateIds(7)
+
+const orderDateTime = new Date();
+
+const totalPrice = Math.random() * 100;
+
+
 
 db.customers.insertMany([
   {
-    "customerId": customer1Id,
+    "customerId": customerIds[0],
     "name": "Fulgencio",
     "surname": "Pantana",
     "personal_information": {
@@ -27,7 +90,7 @@ db.customers.insertMany([
     }
   },
   {
-    "customerId": customer2Id,
+    "customerId": customerIds[1],
     "name": "Munnira",
     "surname": "Katongole",
     "personal_information": {
@@ -39,7 +102,7 @@ db.customers.insertMany([
     }
   },
   {
-    "customerId": customer3Id,
+    "customerId": customerIds[2],
     "name": "Zoneziwoh",
     "surname": "Mbondgulo-Wondieh",
     "personal_information": {
@@ -51,7 +114,7 @@ db.customers.insertMany([
     }
   },
   {
-    "customerId": customer4Id,
+    "customerId": customerIds[3],
     "name": "Aisha",
     "surname": "Abdullahi",
     "personal_information": {
@@ -63,7 +126,7 @@ db.customers.insertMany([
     }
   },
   {
-    "customerId": customer5Id,
+    "customerId": customerIds[4],
     "name": "John",
     "surname": "Smith",
     "personal_information": {
@@ -75,7 +138,7 @@ db.customers.insertMany([
     }
   },
   {
-    "customerId": customer6Id,
+    "customerId": customerIds[5],
     "name": "Maria",
     "surname": "Gonzalez",
     "personal_information": {
@@ -88,42 +151,12 @@ db.customers.insertMany([
   }
 ]);
 
-const pizzaCategory1 = ObjectId();
-const pizzaCategory2 = ObjectId();
-
-const store1Id = ObjectId();
-const store2Id = ObjectId();
-
-const employee1Id = ObjectId();
-const employee2Id = ObjectId();
-const employee3Id = ObjectId();
-const employee4Id = ObjectId();
-const employee5Id = ObjectId();
-const employee6Id = ObjectId();
-
-const product1Id = ObjectId();
-const product2Id = ObjectId();
-const product3Id = ObjectId();
-const product4Id = ObjectId();
-const product5Id = ObjectId();
-const product6Id = ObjectId();
-const product7Id = ObjectId();
-
-const order1Id = ObjectId();
-const order2Id = ObjectId();
-const order3Id = ObjectId();
-
-
-const orderDateTime = new Date();
-
-const totalPrice = Math.random() * 100;
-
 
 // Insert order documents with customer references
 db.orders.insertMany([
   {
-    "orderId": order1Id,
-    "customerId": customer1Id,
+    "orderId": orderIds[0],
+    "customerId": customerIds[0],
     "orderData": [
       {
         "category" : [
@@ -137,11 +170,11 @@ db.orders.insertMany([
                 "categoryName" : "pizza",
                 "pizzaCategory" : [
                     {
-                        "pizzaCategoryId" : pizzaCategory1,
+                        "pizzaCategoryId" : pizzacategoryIds[0],
                         "pizzaCategoryName" : "Extra cheesy"
                     },
                     {
-                        "pizzaCategoryId" : pizzaCategory2,
+                        "pizzaCategoryId" : pizzacategoryIds[1],
                         "pizzaCategoryName" : "Extra cheesy Delight"
                     },
                 ]
@@ -169,7 +202,7 @@ db.orders.insertMany([
       {
         "employee": [
             {
-                "employeeId" : employee1Id,
+                "employeeId" : employeeIds[0],
                 "employee_name" : "Amadou",
                 "employee_lastname" : "Diop",
                 "employee_nif" : "20099807",
@@ -178,7 +211,7 @@ db.orders.insertMany([
                 "employee_store" : store1Id
             },
             {
-                "employeeId" : employee2Id,
+                "employeeId" : employeeIds[1],
                 "employee_name" : "Amina",
                 "employee_lastname" : "Ba",
                 "employee_nif" : "21088907",
@@ -187,7 +220,7 @@ db.orders.insertMany([
                 "employee_store" : store1Id
             },
             {
-                "employeeId" : employee3Id,
+                "employeeId" : employeeIds[2],
                 "employee_name" : "Moussa",
                 "employee_lastname" : "Gueye",
                 "employee_nif" : "22079808",
@@ -196,7 +229,7 @@ db.orders.insertMany([
                 "employee_store" : store1Id
             },
             {
-                "employeeId" : employee4Id,
+                "employeeId" : employeeIds[3],
                 "employee_name" : "Rama",
                 "employee_lastname" : "Kane",
                 "employee_nif" : "23069908",
@@ -205,7 +238,7 @@ db.orders.insertMany([
                 "employee_store" : store2Id
             },
             {
-                "employeeId" : employee5Id,
+                "employeeId" : employeeIds[4],
                 "employee_name" : "Ibrahim",
                 "employee_lastname" : "Ndiaye",
                 "employee_nif" : "24060009",
@@ -214,7 +247,7 @@ db.orders.insertMany([
                 "employee_store" : store2Id
             },
             {
-                "employeeId" : employee6Id,
+                "employeeId" : employeeIds[5],
                 "employee_name" : "Julia",
                 "employee_lastname" : "Smith",
                 "employee_nif" : "25050109",
@@ -227,31 +260,31 @@ db.orders.insertMany([
       {
         "products": [
           {
-            "productId": product1Id,
+            "productId": productIds[0],
             "productName": "Extra Cheesy Delight",
             "productDescription": "a very cheesy pizza",
             "productImage": "C:UsersBastetPicturesCamera Rollcheesy1.png",
             "productPrice": 7.500,
-            "productCategory": pizzaCategory1
+            "productCategory": pizzacategoryIds[0]
           },
           {
-            "productId": product2Id,
+            "productId": productIds[1],
             "productName": "Cheesy Supreme",
             "productDescription": "A pizza loaded with an assortment of cheesy toppings",
             "productImage": "C:path\tocheesy_supreme.png",
             "productPrice": 9.990,
-            "productCategory": pizzaCategory1
+            "productCategory": pizzacategoryIds[1]
           },
           {
-            "productId": product3Id,
+            "productId": productIds[2],
             "productName": "Ultimate Cheesy Delight",
             "productDescription": "Indulge in the ultimate cheesy experience with this pizza",
             "productImage": "C:path\toultimate_cheesy_delight.png",
             "productPrice": 8.990,
-            "productCategory": pizzaCategory2
+            "productCategory": pizzacategoryIds[0]
           },
           {
-            "productId": product4Id,
+            "productId": productIds[3],
             "productName": "Cheesy Beef Burger",
             "productDescription": "A mouthwatering beef burger with a cheesy twist",
             "productImage": "C:path\tocheesy_beef_burger.png",
@@ -259,7 +292,7 @@ db.orders.insertMany([
             "productCategory": "burger"
           },
           {
-            "productId": product5Id,
+            "productId": productIds[4],
             "productName": "Double Cheesy Burger",
             "productDescription": "Two juicy patties and extra cheese make this burger extra delicious",
             "productImage": "C:path\todouble_cheesy_burger.png",
@@ -267,7 +300,7 @@ db.orders.insertMany([
             "productCategory": "burger"
           },
           {
-            "productId": product6Id,
+            "productId": productIds[5],
             "productName": "Impaled IPA",
             "productDescription": "A hoppy and cheesy IPA beer for beer enthusiasts",
             "productImage": "C:path\toimpaled_ipa.png",
@@ -275,7 +308,7 @@ db.orders.insertMany([
             "productCategory": "drink"
           },
           {
-            "productId": product7Id,
+            "productId": productIds[6],
             "productName": "Cheesy Cocktail",
             "productDescription": "A cheesy twist on a classic cocktail",
             "productImage": "C:path\tocheesy_cocktail.png",
@@ -287,55 +320,55 @@ db.orders.insertMany([
     ],
     "orderDescription" : [
         {
-            "orderItem": product1Id,
+            "orderItem": productIds[6],
             "productQuantity" : 2
         },
         {
-            "orderItem": product4Id,
+            "orderItem": productIds[4],
             "productQuantity" : 2
         }
     ],
     "forDelivery": true,
-    "deliveryPerson" : employee5Id,
+    "deliveryPerson" : employeeIds[4],
     "orderDateTime": orderDateTime,
     "deliveryDateTime": orderDateTime,
     "totalPrice": totalPrice
   },
   {
-    "orderId": order2Id,
-    "customerId": customer3Id,
+    "orderId": orderIds[1],
+    "customerId": customerIds[3],
     "orderDescription" : [
         {
-            "orderItem": product4Id,
+            "orderItem": productIds[3],
             "productQuantity" : 2
         },
         {
-            "orderItem": product6Id,
+            "orderItem": productIds[2],
             "productQuantity" : 2
         }
     ],
     "forDelivery": true,
-    "deliveryPerson" : employee4Id,
+    "deliveryPerson" : employeeIds[3],
     "orderDateTime": orderDateTime,
     "deliveryDateTime": orderDateTime,
     "totalPrice": totalPrice
 
   },
   {
-    "orderId": order3Id,
-    "customerId": customer5Id,
+    "orderId": orderIds[2],
+    "customerId": customerIds[4],
     "orderDescription" : [
         {
-            "orderItem": product5Id,
+            "orderItem": productIds[3],
             "productQuantity" : 2
         },
         {
-            "orderItem": product1Id,
+            "orderItem": productIds[2],
             "productQuantity" : 2
         }
     ],
     "forDelivery": true,
-    "deliveryPerson" : employee2Id,
+    "deliveryPerson" : employeeIds[4],
     "orderDateTime": orderDateTime,
     "deliveryDateTime": orderDateTime,
     "totalPrice": totalPrice

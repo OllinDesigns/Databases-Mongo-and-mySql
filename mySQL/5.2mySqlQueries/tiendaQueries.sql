@@ -173,12 +173,12 @@ WHERE f.nombre REGEXP 'w';
 -- 32. Returns a list with the product name, price and manufacturer name, of all products that have a price greater than or equal to €180. Sort the result first by price (in descending order) and second by name (in ascending order).
 SELECT f.codigo AS 'manufacturers code', f.nombre AS 'manufacturers name '
 FROM fabricante f
-JOIN f ON p.codigo_fabricante = f.codigo
+JOIN producto p ON p.codigo_fabricante = f.codigo
 WHERE  p.precio >= 180
 ORDER BY p.precio DESC, p.nombre ASC;
 
 -- 33. Returns a list with the manufacturer's code and name, only of those manufacturers that have associated products in the database.
-SELECT DISTINCT f.codigo AS manufacturer_code, f.nombre AS manufacturer_name
+SELECT f.codigo AS manufacturer_code, f.nombre AS manufacturer_name
 FROM fabricante f
 JOIN producto p ON f.codigo = p.codigo_fabricante;
 
@@ -271,6 +271,5 @@ WHERE codigo_fabricante = (
     WHERE nombre = 'Asus'
   )
 );
-
 
 
